@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -18,9 +19,9 @@ import { AppTheme, AVAILABLE_CURRENCIES, Expense } from '../types/models';
 import { CategoryManagementModal } from './CategoryManagementModal';
 
 const THEME_OPTIONS: { key: AppTheme; label: string }[] = [
+  { key: 'dark', label: 'Obsidian' },
+  { key: 'light', label: 'Porcelain' },
   { key: 'system', label: 'System' },
-  { key: 'light', label: 'Light' },
-  { key: 'dark', label: 'Dark' },
 ];
 
 export function SettingsScreen() {
@@ -51,7 +52,7 @@ export function SettingsScreen() {
     try {
       const json = JSON.stringify(expenses, null, 2);
       const dateStr = new Date().toISOString().slice(0, 10);
-      const filename = `Inpenso_export_${dateStr}.json`;
+      const filename = `TrackMorph_export_${dateStr}.json`;
 
       if (Platform.OS === 'web') {
         Alert.alert('Export Ready', `Prepared ${expenses.length} transactions in JSON format.`);
@@ -65,7 +66,7 @@ export function SettingsScreen() {
       if (canShare) {
         await Sharing.shareAsync(file.uri, {
           mimeType: 'application/json',
-          dialogTitle: 'Export Inpenso Data',
+          dialogTitle: 'Export TrackMorph Data',
         });
       } else {
         Alert.alert('Export Saved', `Saved to ${file.uri}`);
@@ -120,11 +121,35 @@ export function SettingsScreen() {
         <Text style={[styles.screenTitle, { color: theme.text }]}>Settings</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* TrackMorph Premium Brand Banner */}
+        <LinearGradient
+          colors={theme.heroGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.brandBanner}
+        >
+          <LinearGradient
+            colors={theme.accentGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.bannerIcon}
+          >
+            <Ionicons name="pulse" size={24} color="#FFFFFF" />
+          </LinearGradient>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.bannerTitle}>TrackMorph</Text>
+            <Text style={styles.bannerSub}>Private On-Device Finance · v1.1.0</Text>
+          </View>
+          <View style={styles.proPill}>
+            <Text style={styles.proPillText}>LOCAL</Text>
+          </View>
+        </LinearGradient>
+
         {/* Appearance */}
         <Text style={[styles.sectionHeader, { color: theme.secondaryText }]}>APPEARANCE</Text>
-        <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
-          <Text style={[styles.rowLabel, { color: theme.text, marginBottom: 8 }]}>Theme</Text>
+        <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder }]}>
+          <Text style={[styles.rowLabel, { color: theme.text, marginBottom: 10 }]}>Theme</Text>
           <View style={[styles.segmented, { backgroundColor: theme.tertiaryBackground }]}>
             {THEME_OPTIONS.map((opt) => {
               const active = selectedTheme === opt.key;
@@ -132,14 +157,9 @@ export function SettingsScreen() {
                 <TouchableOpacity
                   key={opt.key}
                   onPress={() => setSelectedTheme(opt.key)}
-                  style={[styles.segmentBtn, active && { backgroundColor: theme.cardBackground }]}
+                  style={[styles.segmentBtn, active && { backgroundColor: theme.accent }]}
                 >
-                  <Text
-                    style={[
-                      styles.segmentText,
-                      { color: active ? theme.accent : theme.secondaryText },
-                    ]}
-                  >
+                  <Text style={[styles.segmentText, { color: active ? '#FFFFFF' : theme.secondaryText }]}>
                     {opt.label}
                   </Text>
                 </TouchableOpacity>
@@ -150,9 +170,14 @@ export function SettingsScreen() {
 
         {/* Currency */}
         <Text style={[styles.sectionHeader, { color: theme.secondaryText }]}>CURRENCY</Text>
-        <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
+        <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder }]}>
           <TouchableOpacity onPress={() => setShowCurrencyModal(true)} style={styles.row}>
-            <Text style={[styles.rowLabel, { color: theme.text }]}>Currency</Text>
+            <View style={styles.rowLeft}>
+              <View style={[styles.rowIconBox, { backgroundColor: theme.accentSoft }]}>
+                <Ionicons name="cash-outline" size={16} color={theme.accent} />
+              </View>
+              <Text style={[styles.rowLabel, { color: theme.text }]}>Primary Currency</Text>
+            </View>
             <View style={styles.rowRight}>
               <Text style={[styles.rowValue, { color: theme.secondaryText }]}>
                 {currentCurrencyObj.symbol} {currentCurrencyObj.code}
@@ -162,13 +187,17 @@ export function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Default Settings & Categories */}
+        {/* Categories */}
         <Text style={[styles.sectionHeader, { color: theme.secondaryText }]}>CATEGORIES</Text>
-        <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
+        <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder }]}>
           <TouchableOpacity onPress={() => setShowDefaultCatModal(true)} style={styles.row}>
-            <Text style={[styles.rowLabel, { color: theme.text }]}>Default Category</Text>
+            <View style={styles.rowLeft}>
+              <View style={[styles.rowIconBox, { backgroundColor: `${currentDefaultCat.colorHex}22` }]}>
+                <View style={[styles.colorDot, { backgroundColor: currentDefaultCat.colorHex }]} />
+              </View>
+              <Text style={[styles.rowLabel, { color: theme.text }]}>Default Category</Text>
+            </View>
             <View style={styles.rowRight}>
-              <View style={[styles.colorDot, { backgroundColor: currentDefaultCat.colorHex }]} />
               <Text style={[styles.rowValue, { color: theme.secondaryText }]}>{currentDefaultCat.name}</Text>
               <Ionicons name="chevron-forward" size={16} color={theme.secondaryText} />
             </View>
@@ -176,7 +205,9 @@ export function SettingsScreen() {
           <View style={[styles.divider, { backgroundColor: theme.border }]} />
           <TouchableOpacity onPress={() => setShowCategoryManager(true)} style={styles.row}>
             <View style={styles.rowLeft}>
-              <Ionicons name="grid-outline" size={18} color={theme.accent} />
+              <View style={[styles.rowIconBox, { backgroundColor: theme.accentSoft }]}>
+                <Ionicons name="grid-outline" size={16} color={theme.accent} />
+              </View>
               <Text style={[styles.rowLabel, { color: theme.text }]}>Manage Categories</Text>
             </View>
             <Ionicons name="chevron-forward" size={16} color={theme.secondaryText} />
@@ -185,48 +216,35 @@ export function SettingsScreen() {
 
         {/* Data Management */}
         <Text style={[styles.sectionHeader, { color: theme.secondaryText }]}>DATA MANAGEMENT</Text>
-        <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
+        <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder }]}>
           <TouchableOpacity onPress={handleExport} style={styles.row}>
             <View style={styles.rowLeft}>
-              <Ionicons name="share-outline" size={18} color={theme.accent} />
-              <Text style={[styles.rowLabel, { color: theme.text }]}>Export Data (JSON)</Text>
+              <View style={[styles.rowIconBox, { backgroundColor: theme.greenSoft }]}>
+                <Ionicons name="share-outline" size={16} color={theme.green} />
+              </View>
+              <Text style={[styles.rowLabel, { color: theme.text }]}>Export Backup (JSON)</Text>
             </View>
             <Ionicons name="chevron-forward" size={16} color={theme.secondaryText} />
           </TouchableOpacity>
           <View style={[styles.divider, { backgroundColor: theme.border }]} />
           <TouchableOpacity onPress={handleImport} style={styles.row}>
             <View style={styles.rowLeft}>
-              <Ionicons name="download-outline" size={18} color={theme.accent} />
-              <Text style={[styles.rowLabel, { color: theme.text }]}>Import Data (JSON)</Text>
+              <View style={[styles.rowIconBox, { backgroundColor: theme.accentSoft }]}>
+                <Ionicons name="download-outline" size={16} color={theme.accent} />
+              </View>
+              <Text style={[styles.rowLabel, { color: theme.text }]}>Import Backup (JSON)</Text>
             </View>
             <Ionicons name="chevron-forward" size={16} color={theme.secondaryText} />
           </TouchableOpacity>
           <View style={[styles.divider, { backgroundColor: theme.border }]} />
           <TouchableOpacity onPress={handleReset} style={styles.row}>
             <View style={styles.rowLeft}>
-              <Ionicons name="trash-outline" size={18} color={theme.red} />
+              <View style={[styles.rowIconBox, { backgroundColor: theme.redSoft }]}>
+                <Ionicons name="trash-outline" size={16} color={theme.red} />
+              </View>
               <Text style={[styles.rowLabel, { color: theme.red }]}>Reset All Data</Text>
             </View>
           </TouchableOpacity>
-        </View>
-
-        {/* About */}
-        <Text style={[styles.sectionHeader, { color: theme.secondaryText }]}>ABOUT</Text>
-        <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
-          <View style={styles.row}>
-            <Text style={[styles.rowLabel, { color: theme.text }]}>App</Text>
-            <Text style={[styles.rowValue, { color: theme.secondaryText }]}>Inpenso for Android</Text>
-          </View>
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
-          <View style={styles.row}>
-            <Text style={[styles.rowLabel, { color: theme.text }]}>Version</Text>
-            <Text style={[styles.rowValue, { color: theme.secondaryText }]}>1.0.0</Text>
-          </View>
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
-          <View style={styles.row}>
-            <Text style={[styles.rowLabel, { color: theme.text }]}>License</Text>
-            <Text style={[styles.rowValue, { color: theme.secondaryText }]}>MIT (Port of VintusS/Inpenso)</Text>
-          </View>
         </View>
       </ScrollView>
 
@@ -254,10 +272,10 @@ export function SettingsScreen() {
                   }}
                   style={styles.sheetOption}
                 >
-                  <Text style={{ color: theme.text, fontSize: 15 }}>
+                  <Text style={{ color: theme.text, fontSize: 15, fontWeight: '600' }}>
                     {c.symbol} {c.name} ({c.code})
                   </Text>
-                  {selectedCurrency === c.code && <Ionicons name="checkmark" size={18} color={theme.accent} />}
+                  {selectedCurrency === c.code && <Ionicons name="checkmark-circle" size={20} color={theme.accent} />}
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -291,9 +309,9 @@ export function SettingsScreen() {
                 >
                   <View style={styles.rowLeft}>
                     <View style={[styles.colorDot, { backgroundColor: cat.colorHex }]} />
-                    <Text style={{ color: theme.text, fontSize: 15 }}>{cat.name}</Text>
+                    <Text style={{ color: theme.text, fontSize: 15, fontWeight: '600' }}>{cat.name}</Text>
                   </View>
-                  {defaultCategoryID === cat.id && <Ionicons name="checkmark" size={18} color={theme.accent} />}
+                  {defaultCategoryID === cat.id && <Ionicons name="checkmark-circle" size={20} color={theme.accent} />}
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -314,65 +332,103 @@ const styles = StyleSheet.create({
   topBar: {
     paddingHorizontal: 18,
     paddingTop: 12,
-    paddingBottom: 8,
+    paddingBottom: 10,
   },
-  screenTitle: { fontSize: 30, fontWeight: '800', letterSpacing: -0.5 },
+  screenTitle: { fontSize: 28, fontWeight: '800', letterSpacing: -0.5 },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingBottom: 32,
+    paddingBottom: 110,
   },
+  brandBanner: {
+    borderRadius: 22,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    marginBottom: 4,
+  },
+  bannerIcon: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bannerTitle: { color: '#FFFFFF', fontSize: 19, fontWeight: '800', letterSpacing: -0.3 },
+  bannerSub: { color: 'rgba(226,232,240,0.72)', fontSize: 12, fontWeight: '600', marginTop: 2 },
+  proPill: {
+    backgroundColor: 'rgba(16, 185, 129, 0.22)',
+    borderWidth: 1,
+    borderColor: 'rgba(52, 211, 153, 0.5)',
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  proPillText: { color: '#34D399', fontSize: 10, fontWeight: '800', letterSpacing: 0.8 },
   sectionHeader: {
-    fontSize: 12,
-    fontWeight: '700',
-    marginTop: 16,
-    marginBottom: 6,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1,
+    marginTop: 18,
+    marginBottom: 8,
     marginLeft: 6,
   },
   card: {
-    borderRadius: 16,
+    borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 10,
+    borderWidth: 1,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    paddingVertical: 9,
   },
-  rowLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  rowLeft: { flexDirection: 'row', alignItems: 'center', gap: 11 },
+  rowIconBox: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   rowRight: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  rowLabel: { fontSize: 15, fontWeight: '500' },
-  rowValue: { fontSize: 14 },
+  rowLabel: { fontSize: 15, fontWeight: '600' },
+  rowValue: { fontSize: 13, fontWeight: '600' },
   colorDot: { width: 12, height: 12, borderRadius: 6 },
-  divider: { height: StyleSheet.hairlineWidth },
+  divider: { height: StyleSheet.hairlineWidth, marginLeft: 43 },
   segmented: {
     flexDirection: 'row',
-    borderRadius: 10,
-    padding: 3,
+    borderRadius: 12,
+    padding: 4,
+    gap: 4,
   },
   segmentBtn: {
     flex: 1,
-    paddingVertical: 7,
-    borderRadius: 8,
+    paddingVertical: 8,
+    borderRadius: 9,
     alignItems: 'center',
   },
   segmentText: { fontSize: 13, fontWeight: '700' },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(0,0,0,0.55)',
     justifyContent: 'flex-end',
   },
   sheetBox: {
-    borderTopLeftRadius: 22,
-    borderTopRightRadius: 22,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     padding: 20,
-    paddingBottom: 32,
+    paddingBottom: 34,
   },
-  sheetTitle: { fontSize: 18, fontWeight: '700', marginBottom: 12 },
+  sheetTitle: { fontSize: 18, fontWeight: '800', marginBottom: 12 },
   sheetOption: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: 13,
   },
 });

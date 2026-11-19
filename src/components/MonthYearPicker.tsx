@@ -25,7 +25,7 @@ export function MonthYearPicker({
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const m = d.getMonth() + 1;
       const y = d.getFullYear();
-      const label = y === now.getFullYear() ? getShortMonthName(m) : `${getShortMonthName(m)} ${String(y).slice(-2)}`;
+      const label = y === now.getFullYear() ? getShortMonthName(m) : `${getShortMonthName(m)} '${String(y).slice(-2)}`;
       list.push({ month: m, year: y, key: `${y}-${m}`, label });
     }
     return list;
@@ -45,11 +45,13 @@ export function MonthYearPicker({
                 styles.pill,
                 {
                   backgroundColor: isSelected ? theme.accent : theme.cardBackground,
-                  borderColor: isSelected ? theme.accent : theme.border,
+                  borderColor: isSelected ? theme.accent : theme.cardBorder,
                 },
               ]}
             >
-              <Text style={[styles.pillText, { color: isSelected ? '#FFFFFF' : theme.text }]}>{item.label}</Text>
+              <Text style={[styles.pillText, { color: isSelected ? '#FFFFFF' : theme.secondaryText }]}>
+                {item.label}
+              </Text>
             </TouchableOpacity>
           );
         })}
@@ -67,13 +69,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   pill: {
-    paddingHorizontal: 14,
+    paddingHorizontal: 15,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 14,
     borderWidth: 1,
   },
   pillText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.2,
   },
 });

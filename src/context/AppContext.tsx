@@ -29,8 +29,8 @@ interface PersistedSettings {
 }
 
 const DEFAULT_SETTINGS: PersistedSettings = {
-  selectedCurrency: 'USD',
-  selectedTheme: 'system',
+  selectedCurrency: 'IDR',
+  selectedTheme: 'dark',
   defaultCategoryID: 'builtin-food',
 };
 

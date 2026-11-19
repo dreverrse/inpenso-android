@@ -605,8 +605,8 @@ const styles = StyleSheet.create({
   tabPillText: { fontSize: 13, fontWeight: '700' },
   scrollContent: {
     padding: 16,
-    paddingBottom: 28,
-    gap: 16,
+    paddingBottom: 110,
+    gap: 14,
   },
   summaryGrid: {
     flexDirection: 'row',
@@ -615,9 +615,11 @@ const styles = StyleSheet.create({
   },
   summaryTile: {
     width: '48.4%',
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 14,
     gap: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(148, 163, 184, 0.16)',
   },
   summaryTileTop: {
     flexDirection: 'row',
@@ -625,11 +627,13 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   summaryTitle: { fontSize: 12, fontWeight: '600', flex: 1 },
-  summaryValue: { fontSize: 18, fontWeight: '800' },
+  summaryValue: { fontSize: 18, fontWeight: '800', letterSpacing: -0.3 },
   card: {
-    borderRadius: 20,
+    borderRadius: 22,
     padding: 16,
     gap: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(148, 163, 184, 0.16)',
   },
   cardTitle: { fontSize: 17, fontWeight: '700' },
   emptyText: { textAlign: 'center', paddingVertical: 16, fontSize: 14 },

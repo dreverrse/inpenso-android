@@ -26,15 +26,30 @@ export function CategoryGrid({ categories, selectedCategoryID, onSelect }: Categ
             style={[
               styles.tile,
               {
-                backgroundColor: selected ? `${cat.colorHex}22` : theme.tertiaryBackground,
-                borderColor: selected ? cat.colorHex : 'transparent',
+                backgroundColor: selected ? `${cat.colorHex}20` : theme.tertiaryBackground,
+                borderColor: selected ? cat.colorHex : theme.cardBorder,
               },
             ]}
           >
-            <View style={[styles.iconCircle, { backgroundColor: cat.colorHex }]}>
-              <Ionicons name={mapIconName(cat.iconName)} size={18} color="#FFFFFF" />
+            <View
+              style={[
+                styles.iconSquircle,
+                { backgroundColor: selected ? cat.colorHex : `${cat.colorHex}24` },
+              ]}
+            >
+              <Ionicons
+                name={mapIconName(cat.iconName)}
+                size={18}
+                color={selected ? '#FFFFFF' : cat.colorHex}
+              />
             </View>
-            <Text style={[styles.label, { color: theme.text }]} numberOfLines={1}>
+            <Text
+              style={[
+                styles.label,
+                { color: selected ? theme.text : theme.secondaryText, fontWeight: selected ? '700' : '600' },
+              ]}
+              numberOfLines={1}
+            >
               {cat.name}
             </Text>
           </TouchableOpacity>
@@ -56,20 +71,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     paddingHorizontal: 6,
-    borderRadius: 14,
-    borderWidth: 2,
-    gap: 6,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    gap: 7,
   },
-  iconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  iconSquircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   label: {
     fontSize: 12,
-    fontWeight: '600',
     textAlign: 'center',
   },
 });

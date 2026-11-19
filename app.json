@@ -1,26 +1,31 @@
 {
   "expo": {
-    "name": "Inpenso",
-    "slug": "inpenso-android",
-    "version": "1.0.0",
+    "name": "TrackMorph",
+    "slug": "trackmorph",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#07090F"
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.vintuss.inpenso"
+      "bundleIdentifier": "com.dreverrse.trackmorph"
     },
     "android": {
-      "package": "com.vintuss.inpenso",
-      "versionCode": 1,
+      "package": "com.dreverrse.trackmorph",
+      "versionCode": 2,
       "adaptiveIcon": {
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#070B14",
         "foregroundImage": "./assets/icon.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/icon.png"
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-sharing"

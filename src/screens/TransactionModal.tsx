@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useApp } from '../context/AppContext';
@@ -153,26 +154,28 @@ export function TransactionModal({ visible, editingExpense, onClose }: Transacti
         style={[styles.container, { backgroundColor: theme.groupedBackground }]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View style={[styles.header, { backgroundColor: theme.cardBackground, borderBottomColor: theme.border }]}>
+        <View style={[styles.header, { backgroundColor: theme.cardBackground, borderBottomColor: theme.cardBorder }]}>
           <TouchableOpacity onPress={onClose} style={styles.headerBtn}>
-            <Text style={[styles.headerBtnText, { color: theme.accent }]}>Cancel</Text>
+            <Text style={[styles.headerBtnText, { color: theme.secondaryText }]}>Cancel</Text>
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: theme.text }]}>
-            {editingExpense ? 'Edit Transaction' : 'Add Transaction'}
+            {editingExpense ? 'Edit Entry' : 'New Entry'}
           </Text>
-          <TouchableOpacity onPress={handleSave} disabled={!isFormValid} style={styles.headerBtn}>
-            <Text style={[styles.headerBtnText, { color: isFormValid ? theme.accent : theme.secondaryText, fontWeight: '700' }]}>
+          <TouchableOpacity onPress={handleSave} disabled={!isFormValid} style={[styles.headerBtn, { alignItems: 'flex-end' }]}>
+            <Text
+              style={[
+                styles.headerBtnText,
+                { color: isFormValid ? theme.accent : theme.secondaryText, fontWeight: '800' },
+              ]}
+            >
               Save
             </Text>
           </TouchableOpacity>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-          {/* Transaction Details Card */}
-          <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
-            <Text style={[styles.cardTitle, { color: theme.text }]}>Transaction Details</Text>
-
-            {/* Segmented Control */}
+          {/* Hero Amount Card */}
+          <View style={[styles.heroAmountCard, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder }]}>
             <View style={[styles.segmented, { backgroundColor: theme.tertiaryBackground }]}>
               {(['expense', 'income'] as TransactionType[]).map((type) => {
                 const active = transactionType === type;
@@ -182,13 +185,20 @@ export function TransactionModal({ visible, editingExpense, onClose }: Transacti
                     onPress={() => setTransactionType(type)}
                     style={[
                       styles.segmentBtn,
-                      active && { backgroundColor: theme.cardBackground },
+                      active && {
+                        backgroundColor: type === 'income' ? theme.green : theme.accent,
+                      },
                     ]}
                   >
+                    <Ionicons
+                      name={type === 'income' ? 'arrow-down-circle' : 'arrow-up-circle'}
+                      size={15}
+                      color={active ? '#FFFFFF' : theme.secondaryText}
+                    />
                     <Text
                       style={[
                         styles.segmentText,
-                        { color: active ? (type === 'income' ? theme.green : theme.text) : theme.secondaryText },
+                        { color: active ? '#FFFFFF' : theme.secondaryText },
                       ]}
                     >
                       {type === 'expense' ? 'Expense' : 'Income'}
@@ -198,39 +208,39 @@ export function TransactionModal({ visible, editingExpense, onClose }: Transacti
               })}
             </View>
 
-            <Text style={[styles.fieldLabel, { color: theme.secondaryText }]}>Title</Text>
-            <View style={[styles.inputRow, { backgroundColor: theme.tertiaryBackground }]}>
-              <Ionicons name="pencil" size={16} color={theme.secondaryText} />
-              <TextInput
-                value={title}
-                onChangeText={setTitle}
-                placeholder={transactionType === 'expense' ? 'Expense title' : 'Income title'}
-                placeholderTextColor={theme.secondaryText}
-                style={[styles.input, { color: theme.text }]}
-              />
-            </View>
-
-            <Text style={[styles.fieldLabel, { color: theme.secondaryText }]}>Amount</Text>
-            <View style={[styles.inputRow, { backgroundColor: theme.tertiaryBackground }]}>
-              <Text style={[styles.currencyPrefix, { color: theme.accent }]}>{currencySymbol}</Text>
+            <View style={styles.bigAmountRow}>
+              <Text
+                style={[
+                  styles.bigCurrency,
+                  { color: transactionType === 'income' ? theme.green : theme.accent },
+                ]}
+              >
+                {currencySymbol}
+              </Text>
               <TextInput
                 value={price}
                 onChangeText={setPrice}
                 placeholder="0.00"
-                placeholderTextColor={theme.secondaryText}
+                placeholderTextColor={theme.gray}
                 keyboardType="decimal-pad"
-                style={[styles.input, styles.amountInput, { color: theme.text }]}
+                style={[styles.bigAmountInput, { color: theme.text }]}
               />
-              {price.length > 0 && (
-                <TouchableOpacity onPress={() => setPrice('')}>
-                  <Ionicons name="close-circle" size={18} color={theme.secondaryText} />
-                </TouchableOpacity>
-              )}
+            </View>
+
+            <View style={[styles.inputRow, { backgroundColor: theme.tertiaryBackground }]}>
+              <Ionicons name="create-outline" size={18} color={theme.secondaryText} />
+              <TextInput
+                value={title}
+                onChangeText={setTitle}
+                placeholder={transactionType === 'expense' ? 'What did you spend on?' : 'Income source'}
+                placeholderTextColor={theme.secondaryText}
+                style={[styles.input, { color: theme.text }]}
+              />
             </View>
           </View>
 
           {/* Category Card */}
-          <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
+          <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder }]}>
             <Text style={[styles.cardTitle, { color: theme.text }]}>Category</Text>
             <CategoryGrid
               categories={pickerCategories}
@@ -240,7 +250,7 @@ export function TransactionModal({ visible, editingExpense, onClose }: Transacti
           </View>
 
           {/* Date Card */}
-          <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
+          <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder }]}>
             <View style={styles.dateHeader}>
               <Text style={[styles.cardTitle, { color: theme.text, marginBottom: 0 }]}>Date</Text>
               <Text style={[styles.datePreview, { color: theme.accent }]}>
@@ -248,24 +258,19 @@ export function TransactionModal({ visible, editingExpense, onClose }: Transacti
               </Text>
             </View>
             <View style={styles.quickDates}>
-              <TouchableOpacity
-                onPress={() => shiftDays(0)}
-                style={[styles.chip, { backgroundColor: theme.tertiaryBackground }]}
-              >
-                <Text style={[styles.chipText, { color: theme.text }]}>Today</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => shiftDays(-1)}
-                style={[styles.chip, { backgroundColor: theme.tertiaryBackground }]}
-              >
-                <Text style={[styles.chipText, { color: theme.text }]}>Yesterday</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => shiftDays(-2)}
-                style={[styles.chip, { backgroundColor: theme.tertiaryBackground }]}
-              >
-                <Text style={[styles.chipText, { color: theme.text }]}>2 days ago</Text>
-              </TouchableOpacity>
+              {[
+                { label: 'Today', offset: 0 },
+                { label: 'Yesterday', offset: -1 },
+                { label: '2 days ago', offset: -2 },
+              ].map((d) => (
+                <TouchableOpacity
+                  key={d.label}
+                  onPress={() => shiftDays(d.offset)}
+                  style={[styles.chip, { backgroundColor: theme.tertiaryBackground }]}
+                >
+                  <Text style={[styles.chipText, { color: theme.text }]}>{d.label}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
             <View style={[styles.inputRow, { backgroundColor: theme.tertiaryBackground }]}>
               <Ionicons name="calendar-outline" size={16} color={theme.secondaryText} />
@@ -280,7 +285,7 @@ export function TransactionModal({ visible, editingExpense, onClose }: Transacti
           </View>
 
           {/* Notes Card */}
-          <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
+          <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder }]}>
             <Text style={[styles.cardTitle, { color: theme.text }]}>Notes (Optional)</Text>
             <TextInput
               value={notes}
@@ -294,20 +299,28 @@ export function TransactionModal({ visible, editingExpense, onClose }: Transacti
             />
           </View>
 
-          {/* Action Buttons */}
-          <TouchableOpacity
-            onPress={handleSave}
-            disabled={!isFormValid}
-            style={[styles.primaryBtn, { backgroundColor: isFormValid ? theme.accent : theme.gray }]}
-          >
-            <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
-            <Text style={styles.primaryBtnText}>{editingExpense ? 'Save Changes' : 'Save Transaction'}</Text>
+          {/* Gradient Save CTA */}
+          <TouchableOpacity onPress={handleSave} disabled={!isFormValid} activeOpacity={0.85}>
+            <LinearGradient
+              colors={isFormValid ? theme.accentGradient : [theme.gray, theme.gray]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.primaryBtn}
+            >
+              <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
+              <Text style={styles.primaryBtnText}>
+                {editingExpense ? 'Save Changes' : 'Save Transaction'}
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
 
           {editingExpense && (
-            <TouchableOpacity onPress={handleDelete} style={[styles.primaryBtn, { backgroundColor: theme.red }]}>
-              <Ionicons name="trash" size={18} color="#FFFFFF" />
-              <Text style={styles.primaryBtnText}>Delete Transaction</Text>
+            <TouchableOpacity
+              onPress={handleDelete}
+              style={[styles.deleteBtn, { backgroundColor: theme.redSoft, borderColor: theme.red }]}
+            >
+              <Ionicons name="trash-outline" size={18} color={theme.red} />
+              <Text style={[styles.deleteBtnText, { color: theme.red }]}>Delete Transaction</Text>
             </TouchableOpacity>
           )}
         </ScrollView>
@@ -322,108 +335,119 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
     paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 1,
   },
-  headerBtn: { minWidth: 60 },
-  headerBtnText: { fontSize: 16 },
-  headerTitle: { fontSize: 17, fontWeight: '700' },
+  headerBtn: { minWidth: 64 },
+  headerBtnText: { fontSize: 15, fontWeight: '600' },
+  headerTitle: { fontSize: 17, fontWeight: '800' },
   scrollContent: {
     padding: 16,
+    gap: 14,
+    paddingBottom: 40,
+  },
+  heroAmountCard: {
+    borderRadius: 22,
+    padding: 18,
+    borderWidth: 1,
     gap: 16,
-    paddingBottom: 36,
   },
   card: {
-    borderRadius: 18,
+    borderRadius: 22,
     padding: 16,
+    borderWidth: 1,
     gap: 12,
   },
   cardTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 4,
+    fontSize: 15,
+    fontWeight: '800',
+    marginBottom: 2,
   },
   segmented: {
     flexDirection: 'row',
-    borderRadius: 12,
+    borderRadius: 14,
     padding: 4,
+    gap: 4,
   },
   segmentBtn: {
     flex: 1,
-    paddingVertical: 8,
-    borderRadius: 9,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 11,
   },
   segmentText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
   },
-  fieldLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginTop: 4,
+  bigAmountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    gap: 6,
+  },
+  bigCurrency: {
+    fontSize: 28,
+    fontWeight: '800',
+  },
+  bigAmountInput: {
+    fontSize: 42,
+    fontWeight: '800',
+    minWidth: 120,
+    textAlign: 'center',
+    padding: 0,
+    letterSpacing: -1,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     gap: 10,
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: '600',
     padding: 0,
-  },
-  currencyPrefix: {
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  amountInput: {
-    fontSize: 20,
-    fontWeight: '700',
   },
   dateHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  datePreview: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  quickDates: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  chipText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
+  datePreview: { fontSize: 13, fontWeight: '700' },
+  quickDates: { flexDirection: 'row', gap: 8 },
+  chip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 12 },
+  chipText: { fontSize: 12, fontWeight: '700' },
   notesInput: {
-    borderRadius: 12,
-    padding: 12,
-    minHeight: 90,
-    fontSize: 15,
+    borderRadius: 14,
+    padding: 13,
+    minHeight: 84,
+    fontSize: 14,
   },
   primaryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    paddingVertical: 15,
-    borderRadius: 16,
+    paddingVertical: 16,
+    borderRadius: 18,
   },
-  primaryBtnText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
+  primaryBtnText: { color: '#FFFFFF', fontSize: 16, fontWeight: '800' },
+  deleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 18,
+    borderWidth: 1,
   },
+  deleteBtnText: { fontSize: 15, fontWeight: '700' },
 });
