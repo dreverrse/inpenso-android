@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "Inpenso",
+    "slug": "inpenso-android",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vintuss.inpenso"
+    },
+    "android": {
+      "package": "com.vintuss.inpenso",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#FFFFFF",
+        "foregroundImage": "./assets/icon.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
+    },
+    "plugins": [
+      "expo-sharing"
+    ]
+  }
+}
